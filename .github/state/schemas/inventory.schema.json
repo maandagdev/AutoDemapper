@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://autodemapper.dev/schemas/inventory.json",
+  "title": "AutoDemapper Inventory Schema",
+  "description": "Schema for Stage 1 output: Repository facts and mapping inventory",
+  "type": "object",
+  "required": ["version", "timestamp", "repoFacts", "mappings", "statistics"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "repoFacts": {
+      "type": "object",
+      "required": ["solutionPath", "testFramework", "testCommand", "testProjects"],
+      "properties": {
+        "solutionPath": {
+          "type": ["string", "null"],
+          "description": "Path to .sln file or null if standalone projects"
+        },
+        "testFramework": {
+          "type": "string",
+          "enum": ["xunit", "nunit", "mstest", "unknown"],
+          "description": "Detected test framework"
+        },
+        "testCommand": {
+          "type": "string",
+          "description": "Command to run tests (e.g., dotnet test)"
+        },
+        "testProjects": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Paths to test project files"
+        },
+        "netVersion": {
+          "type": "string",
+          "description": "Target .NET version (e.g., net8.0)"
+        },
+        "autoMapperVersion": {
+          "type": ["string", "null"],
+          "description": "AutoMapper package version if found"
+        }
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "profilePath", "profileClass", "sourceType", "destType", "lineNumber", "tier", "features"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for this mapping"
+          },
+          "profilePath": {
+            "type": "string",
+            "description": "File path to the profile class"
+          },
+          "profileClass": {
+            "type": "string",
+            "description": "Name of the Profile class"
+          },
+          "sourceType": {
+            "type": "string",
+            "description": "Source type in CreateMap<Source, Dest>"
+          },
+          "destType": {
+            "type": "string",
+            "description": "Destination type in CreateMap<Source, Dest>"
+          },
+          "lineNumber": {
+            "type": "integer",
+            "description": "Line number of CreateMap declaration"
+          },
+          "tier": {
+            "type": "string",
+            "enum": ["leaf", "formember", "converter", "hierarchy", "complex", "projection"],
+            "description": "Complexity tier classification"
+          },
+          "features": {
+            "type": "object",
+            "properties": {
+              "hasForMember": { "type": "boolean" },
+              "hasIgnore": { "type": "boolean" },
+              "hasInclude": { "type": "boolean" },
+              "hasIncludeBase": { "type": "boolean" },
+              "hasConvertUsing": { "type": "boolean" },
+              "hasAfterMap": { "type": "boolean" },
+              "hasBeforeMap": { "type": "boolean" },
+              "hasValueResolver": { "type": "boolean" },
+              "hasProjection": { "type": "boolean" },
+              "hasMemberValueResolver": { "type": "boolean" },
+              "hasReverseMap": { "type": "boolean" },
+              "hasCondition": { "type": "boolean" }
+            }
+          },
+          "dependencies": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Other profiles this mapping depends on"
+          }
+        }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "required": ["totalMappings", "byTier"],
+      "properties": {
+        "totalMappings": { "type": "integer" },
+        "byTier": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "profileCount": { "type": "integer" }
+      }
+    }
+  }
+}

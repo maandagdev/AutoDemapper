@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://autodemapper.dev/schemas/tests.json",
+  "title": "AutoDemapper Tests Schema",
+  "description": "Schema for Stage 2 output: Generated characterization tests",
+  "type": "object",
+  "required": ["version", "timestamp", "generatedTests", "statistics"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "generatedTests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["mappingId", "testFilePath", "testClassName", "testMethods", "status"],
+        "properties": {
+          "mappingId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Reference to mapping ID from inventory"
+          },
+          "testFilePath": {
+            "type": "string",
+            "description": "Path to generated test file"
+          },
+          "testClassName": {
+            "type": "string",
+            "description": "Name of the test class"
+          },
+          "testMethods": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Names of test methods generated"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["generated", "needs_manual_test", "failed"],
+            "description": "Status of test generation"
+          },
+          "failureReason": {
+            "type": "string",
+            "description": "Reason if status is 'failed'"
+          }
+        }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "required": ["testsGenerated", "mappingsCovered"],
+      "properties": {
+        "testsGenerated": { "type": "integer" },
+        "mappingsCovered": { "type": "integer" },
+        "mappingsNeedingManual": { "type": "integer" }
+      }
+    }
+  }
+}

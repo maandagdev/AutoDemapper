@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://autodemapper.dev/schemas/migration.json",
+  "title": "AutoDemapper Migration Schema",
+  "description": "Schema for Stage 5 output: Migration implementation results",
+  "type": "object",
+  "required": ["version", "timestamp", "migrations", "statistics"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "migrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["mappingId", "status"],
+        "properties": {
+          "mappingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["migrated", "failed", "skipped", "pending"]
+          },
+          "newMapperPath": {
+            "type": "string",
+            "description": "Path to new mapper file"
+          },
+          "newMapperClass": {
+            "type": "string",
+            "description": "Name of new mapper class"
+          },
+          "newMapperMethod": {
+            "type": "string",
+            "description": "Name of mapping method"
+          },
+          "callSitesUpdated": {
+            "type": "integer",
+            "description": "Number of call sites updated"
+          },
+          "callSiteFiles": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Files with updated call sites (path:line)"
+          },
+          "failureReason": {
+            "type": "string",
+            "description": "Reason if status is 'failed'"
+          },
+          "skipReason": {
+            "type": "string",
+            "description": "Reason if status is 'skipped'"
+          }
+        }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "required": ["migrated", "failed", "skipped"],
+      "properties": {
+        "migrated": { "type": "integer" },
+        "failed": { "type": "integer" },
+        "skipped": { "type": "integer" },
+        "pending": { "type": "integer" },
+        "callSitesTotal": { "type": "integer" }
+      }
+    }
+  }
+}

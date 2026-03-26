@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://autodemapper.dev/schemas/audit.json",
+  "title": "AutoDemapper Audit Schema",
+  "description": "Schema for Stage 3 output: Test coverage audit results",
+  "type": "object",
+  "required": ["version", "timestamp", "coverage", "gaps", "readyForBaseline"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["mappingsWithTests", "mappingsWithoutTests", "estimatedCoverage"],
+      "properties": {
+        "mappingsWithTests": { "type": "integer" },
+        "mappingsWithoutTests": { "type": "integer" },
+        "estimatedCoverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["mappingId", "issue", "recommendation"],
+        "properties": {
+          "mappingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "issue": {
+            "type": "string",
+            "enum": [
+              "missing_test",
+              "missing_null_handling_test",
+              "missing_collection_test",
+              "missing_nested_object_test",
+              "missing_edge_case",
+              "incomplete_property_coverage"
+            ]
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          }
+        }
+      }
+    },
+    "readyForBaseline": {
+      "type": "boolean",
+      "description": "Whether coverage is sufficient to proceed"
+    },
+    "blockers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Issues that must be resolved before proceeding"
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Non-blocking issues to be aware of"
+    }
+  }
+}
