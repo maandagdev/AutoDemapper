@@ -1,7 +1,7 @@
 ---
 name: reporter-agent
 description: Generates final migration report, suggests commit strategy, and summarizes outcomes.
-tools: ['agent', 'read', 'search', 'edit', 'todo']
+tools: ['agent', 'read', 'search', 'edit', 'execute', 'todo']
 user-invocable: false
 ---
 

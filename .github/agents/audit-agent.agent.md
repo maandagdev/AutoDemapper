@@ -1,7 +1,7 @@
 ---
 name: audit-agent
 description: Audits test coverage for AutoMapper mappings. Identifies gaps and blockers before migration.
-tools: ['agent', 'read', 'search', 'edit', 'todo']
+tools: ['agent', 'read', 'search', 'edit', 'execute', 'todo']
 user-invocable: false
 ---
 

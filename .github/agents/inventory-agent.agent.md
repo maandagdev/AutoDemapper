@@ -1,7 +1,7 @@
 ---
 name: inventory-agent
 description: Discovers .NET solution structure, test frameworks, and AutoMapper usage patterns. Read-only analysis agent.
-tools: ['agent', 'read', 'search', 'edit', 'todo']
+tools: ['agent', 'read', 'search', 'edit', 'execute', 'todo']
 user-invocable: false
 ---
 

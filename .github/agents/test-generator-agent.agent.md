@@ -1,7 +1,7 @@
 ---
 name: test-generator-agent
 description: Generates characterization tests for AutoMapper mappings. Creates tests but never modifies source code.
-tools: ['agent', 'read', 'search', 'edit', 'todo']
+tools: ['agent', 'read', 'search', 'edit', 'execute', 'todo']
 user-invocable: false
 ---
 
