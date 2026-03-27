@@ -23,9 +23,10 @@ At the start of every task, use the `#todo` tool to create a step-by-step todo l
 - Write final report to `.github/state/report.json`
 
 ### MUST NOT
-- Modify any code
+- Modify mapper or test code
 - Execute tests
 - Make false claims about migration success
+- Perform cleanup if `automapperRemovalReady` is false
 
 ## Report Components
 
@@ -89,6 +90,57 @@ Read these skill files before executing the corresponding workflow steps:
 5. List any blockers
 6. Generate recommendations
 7. Write report.json
+8. **If `automapperRemovalReady: true`** — execute AutoMapper cleanup (see below)
+
+## AutoMapper Cleanup (only when `automapperRemovalReady: true`)
+
+Run these steps in order. Stop on any failure and report it; do not continue to the next step.
+
+### Step 1: Remove AutoMapper packages
+
+For each project path listed in `inventory.json` under `repoFacts.testProjects` and the main source projects:
+
+```bash
+dotnet remove {project.csproj} package AutoMapper
+dotnet remove {project.csproj} package AutoMapper.Extensions.Microsoft.DependencyInjection
+```
+
+Skip silently if the package is not referenced by that project.
+
+### Step 2: Delete Profile files
+
+For each file in `inventory.json` under `profiles[*].filePath`:
+- Confirm the file contains a class inheriting from `Profile`
+- Delete it
+
+### Step 3: Remove AddAutoMapper() registrations
+
+Search for `AddAutoMapper` in all `*.cs` files:
+```bash
+grep -rn "AddAutoMapper" --include="*.cs"
+```
+
+For each match, remove the entire `AddAutoMapper(...)` call (including the leading `.` if it is a fluent chain call). Preserve surrounding code.
+
+If `AddAutoMapper` is the only call in a method (unlikely but possible), leave the empty method body — do not delete the method.
+
+### Step 4: Delete characterization test files
+
+Characterization tests use `MapperConfiguration` + `IMapper` and will fail to compile once AutoMapper is removed. They must be deleted.
+
+For each file recorded in `tests.json` under `testFiles[*].filePath`:
+- Confirm the file exists and contains `[Trait("Category", "Characterization")]`, `[Category("Characterization")]`, or `[TestCategory("Characterization")]`
+- Delete it
+
+After deletion, check whether any test project directories are now empty. If a directory only contained characterization tests and is now empty, remove the directory too.
+
+### Step 5: Verify build
+
+```bash
+dotnet build --no-restore --nologo -v quiet
+```
+
+If the build fails, record the error in `report.json` under `cleanupErrors` and stop. Do not mark cleanup as complete.
 
 ## Commit Message Templates
 

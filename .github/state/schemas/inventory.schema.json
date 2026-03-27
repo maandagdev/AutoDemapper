@@ -43,6 +43,15 @@
         "autoMapperVersion": {
           "type": ["string", "null"],
           "description": "AutoMapper package version if found"
+        },
+        "mappingApproach": {
+          "type": "string",
+          "enum": ["manual", "mapperly"],
+          "description": "Mapper implementation approach chosen by user"
+        },
+        "fileGroupingApproved": {
+          "type": "boolean",
+          "description": "True if user explicitly approved grouping multiple mapper classes into one file"
         }
       }
     },

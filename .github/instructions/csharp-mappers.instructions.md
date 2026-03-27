@@ -39,10 +39,21 @@ Items = source.Items?.Select(i => i.ToItemDto()).ToList() ?? new List<ItemDto>()
 
 ## Nested Objects
 
-Use null-conditional access for navigation:
+Use null-conditional access for navigation and for calling nested mapping methods:
 
 ```csharp
 CustomerName = source.Customer?.Name
+Address = source.Address?.ToAddressDto()
+```
+
+**Never** use the null-forgiving operator (`!`) to suppress nullable warnings on nested mappings. It lies to the compiler and masks a real null-reference risk:
+
+```csharp
+// WRONG — crashes at runtime if Address is null
+Address = source.Address.ToAddressDto()!
+
+// CORRECT
+Address = source.Address?.ToAddressDto()
 ```
 
 ## Hierarchy Mappings (Include / IncludeBase)
@@ -85,6 +96,20 @@ extern static void SetPropertyName(DestType dest, string value);
 | Mapping method | `To{DestType}()` (e.g., `ToDto()`, `ToViewModel()`) |
 | Base helper | `Map{BaseName}Properties(source, dest)` |
 | File location | `src/Mappers/{SourceType}Mapper.cs` |
+
+## File Layout — One Class Per File (Default)
+
+By default, each mapper class gets its **own file**: `{SourceType}Mapper.cs`. Multiple mapper classes in a single file is **not permitted** unless the user explicitly approves it.
+
+When you have mappings that all originate from the same external package or domain (e.g., 5+ reference-data types with identical structure), **stop and ask the user**:
+
+> "I found N mapper classes that all map `{Domain}` types. Should I create one file per mapper (default), or group them into a single `{Domain}Mappers.cs`?"
+
+After the user answers:
+- **One file per mapper (default)**: proceed normally, do not set any flag.
+- **Grouped**: write `repoFacts.fileGroupingApproved: true` to `inventory.json` before creating any files. This persists the choice so the agent never asks again during this pipeline run.
+
+Only proceed with a grouped file after the flag is written.
 
 ## Forbidden
 

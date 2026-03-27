@@ -92,7 +92,7 @@ public static Order ToDomain(this OrderDao dao)
 
 **Naming convention**: Method names must follow `^To(Dao|Domain|(\w*Dto))$`. The class is a `static class` in the Mappers namespace.
 
-**File**: `src/Mappers/{SourceType}Mapper.cs`
+**File**: `src/Mappers/{SourceType}Mapper.cs` — one mapper class per file, no exceptions unless the user has explicitly approved grouping (see `repoFacts.fileGroupingApproved` in inventory.json). If you are about to write multiple mapper classes into one file without that flag, **stop and ask the user first**.
 
 **Structure**:
 ```csharp
